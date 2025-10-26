@@ -1,31 +1,37 @@
 package coma.angelcode.jpaPratica;
 
-import coma.angelcode.jpaPratica.entities.CustomerEntity;
-import coma.angelcode.jpaPratica.entities.HotelEntity;
-import coma.angelcode.jpaPratica.entities.ReservationEntity;
-import coma.angelcode.jpaPratica.entities.RoomEntity;
-import coma.angelcode.jpaPratica.repositories.CustomerRepository;
-import coma.angelcode.jpaPratica.repositories.HotelRepository;
-import coma.angelcode.jpaPratica.repositories.ReservationRepository;
-import coma.angelcode.jpaPratica.repositories.RoomRepository;
+
+import coma.angelcode.jpaPratica.entities.DoctorEntity;
+import coma.angelcode.jpaPratica.entities.PatientEntity;
+import coma.angelcode.jpaPratica.entities.PrescriptionEntity;
+import coma.angelcode.jpaPratica.entities.QuoteEntity;
+import coma.angelcode.jpaPratica.repositories.DoctorRepository;
+import coma.angelcode.jpaPratica.repositories.PatientRepository;
+import coma.angelcode.jpaPratica.repositories.PrescriptionRepository;
+import coma.angelcode.jpaPratica.repositories.QuoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
+
 
 @SpringBootApplication
 public class JpaPraticaApplication implements CommandLineRunner {
 	@Autowired
-	HotelRepository hotelRepo;
+	private DoctorRepository doctorRepository;
+
 	@Autowired
-	ReservationRepository reservationRepo;
+	private PatientRepository patientRepository;
+
 	@Autowired
-	RoomRepository roomRepo;
+	private PrescriptionRepository prescriptionRepository;
+
 	@Autowired
-	CustomerRepository customerRepo;
+	private QuoteRepository quoteRepository;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(JpaPraticaApplication.class, args);
@@ -35,39 +41,47 @@ public class JpaPraticaApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		// Crear hotel
-		HotelEntity hotel = new HotelEntity();
-		hotel.setHotelName("Hotel Andino");
-		hotel.setHotelAddress("Av. Los Próceres 250, Lima");
-		hotel.setPhoneNumber("987654321");
-		hotelRepo.save(hotel);
+		//Creamos un doctor
+		DoctorEntity doctor = DoctorEntity.builder()
+				.doctorName("Angel Hidalgo")
+				.phoneNumber("98765432")
+				.speciality("Traumatologia")
+				.build();
 
-		// Crear habitación
-		RoomEntity room = new RoomEntity();
-		room.setPrice(new BigDecimal("420.00"));
-		room.setType("Matrimonial");
-		room.setNumber("334");
-		roomRepo.save(room);
+		doctorRepository.save(doctor);
+
+		//Creamos un Paciente
+
+		PatientEntity patient = PatientEntity.builder()
+				.PatientName("Camila Ramirez")
+				.dni("74635263")
+				.dateOfBirth(LocalDate.of(1980, Month.AUGUST, 20))
+				.phoneNumber("987654321")
+				.build();
+		patientRepository.save(patient);
 
 
-		// Crear cliente
-		CustomerEntity customer = new CustomerEntity();
-		customer.setCustomerName("Ángel Hidalgo");
-		customer.setEmail("angel@example.com");
-		customer.setPhoneNumber("994585708");
-		customerRepo.save(customer);
+		//Creamos un Cita
 
-		// Crear reserva
-		ReservationEntity reservation = new ReservationEntity();
-		reservation.setStartDate(LocalDate.of(2025, 11, 10));
-		reservation.setEndDate(LocalDate.of(2025, 11, 14));
-		reservation.setRoomEntity(room);
-		reservation.setCustomerEntity(customer);
-		reservationRepo.save(reservation);
+		QuoteEntity quote = QuoteEntity.builder()
+				.date(LocalDate.of(2002,Month.JULY,20))
+				.description("Cita medica por dolor de poto")
+				.patientEntity(patient)
+				.doctorEntity(doctor)
+				.build();
+		quoteRepository.save(quote);
 
-		System.out.println("✅ Datos insertados correctamente");
 
+		//Creamos una receta
+		PrescriptionEntity prescription = PrescriptionEntity.builder()
+				.description("X3 PARACETAMOL")
+				.issueDate(LocalDate.of(2009,Month.AUGUST,17))
+				.quoteEntity(quote)
+				.build();
+
+		System.out.println("✅ Datos insertados correctamente.");
 
 
 	}
 }
+
